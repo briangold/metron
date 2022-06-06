@@ -19,17 +19,17 @@ pub fn main() anyerror!void {
 
         // source: Chandler Carruth's CppCon 2017 talk
         // https://www.youtube.com/watch?v=2EWejmkKlxs
-        pub fn do_bench(state: *State, bytes: usize) Counters {
+        pub fn do_bench(state: *State, bytes: usize) !Counters {
             const count = bytes / @sizeOf(usize) / 2; // half for indices, half for data
             const List = std.ArrayListAligned(usize, std.atomic.cache_line);
 
             var prng = std.rand.DefaultPrng.init(0);
             const random = prng.random();
 
-            var data = List.initCapacity(state.alloc, count) catch unreachable;
+            var data = try List.initCapacity(state.alloc, count);
             defer data.deinit();
 
-            var indx = List.initCapacity(state.alloc, count) catch unreachable;
+            var indx = try List.initCapacity(state.alloc, count);
             defer indx.deinit();
 
             data.expandToCapacity();

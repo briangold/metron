@@ -35,12 +35,11 @@ pub fn main() anyerror!void {
             }
         }
 
-        pub fn fixture(state: *State, _: void) void {
+        pub fn fixture(state: *State, _: void) !void {
             // We can do expensive setup and teardown before the main loop,
             // with no disruption to results.
             const size = 100 * 1024 * 1024;
-            var arr = state.alloc.alloc(u8, size) catch
-                @panic("couldn't allocate");
+            var arr = try state.alloc.alloc(u8, size);
             defer state.alloc.free(arr);
 
             std.mem.set(u8, arr, 42);

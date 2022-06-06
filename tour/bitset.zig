@@ -11,9 +11,8 @@ pub fn main() anyerror!void {
         pub const name = "bitset";
         pub const args = range(usize, 2, 8, 1024); // {8, 16, 32, ..., 1024}
 
-        pub fn run(state: *State, n: usize) void {
-            var bs = std.bit_set.DynamicBitSet.initFull(state.alloc, n) catch
-                @panic("cannot allocate bitset");
+        pub fn run(state: *State, n: usize) !void {
+            var bs = try std.bit_set.DynamicBitSet.initFull(state.alloc, n);
             defer bs.deinit();
 
             bs.toggle(n / 2); // flip a bit

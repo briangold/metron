@@ -165,7 +165,16 @@ fn runThreads(
             const fun = @field(B, def.name);
             const copt = std.builtin.CallOptions{ .modifier = .never_inline };
             const FunArgs = std.meta.ArgsTuple(@TypeOf(fun));
-            const res = @call(copt, fun, FunArgs{ &state, arg });
+            const Return = @typeInfo(@TypeOf(fun)).Fn.return_type orelse
+                @compileError(def.name ++ " missing return type");
+
+            // Run the user-provided function and panic on any error
+            const maybe_err = @call(copt, fun, FunArgs{ &state, arg });
+            const res = switch (@typeInfo(Return)) {
+                .ErrorUnion => maybe_err catch
+                    @panic("Benchmark '" ++ def.name ++ "' hit error"),
+                else => maybe_err,
+            };
 
             if (state.duration == null) {
                 // The benchmark entry didn't set the state duration, which

@@ -17,12 +17,12 @@ pub fn main() anyerror!void {
             rate: ByteCounter(.div_1024) = .{},
         };
 
-        pub fn run(state: *State, n: usize) Counters {
+        pub fn run(state: *State, n: usize) !Counters {
             const cl = std.atomic.cache_line;
 
-            var src = state.alloc.alignedAlloc(u8, cl, n) catch unreachable;
+            var src = try state.alloc.alignedAlloc(u8, cl, n);
             defer state.alloc.free(src);
-            var dst = state.alloc.alignedAlloc(u8, cl, n) catch unreachable;
+            var dst = try state.alloc.alignedAlloc(u8, cl, n);
             defer state.alloc.free(dst);
 
             std.mem.set(@TypeOf(src[0]), src, 'x');
