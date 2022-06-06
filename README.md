@@ -41,15 +41,15 @@ measuring time and counting loop iterations to get an accurate measurement of
 how long `someFunction` takes per call.
 
 To learn more about the features and details of Metron, see the [guided
-tour](tests/README.md).
+tour](tour/README.md).
 
 ## Example output
 
-Clone this repository and use a recent Zig binary to build the included tests.
+Clone this repository and use a recent Zig binary to build the included tour.
 On my M1 Macbook Pro:
 
 ```console
-$ zig build -Drelease-fast=true   # Build tests
+$ zig build -Drelease-fast=true   # Build samples
 $ ./zig-out/bin/cache             # Run the "cache" benchmark
 ---------------------------------------
 Benchmark           Time     Iterations
@@ -74,7 +74,7 @@ This benchmark is modeled after Chandler Carruth's [CppCon 2017
 talk](https://www.youtube.com/watch?v=2EWejmkKlxs), and shows that you can
 (roughly) derive the organization of your CPU cache hierarchy by writing a
 benchmark. Except you have to be careful of the compiler and the hardware trying
-to outsmart your test. See the [full code](tests/cache.zig).
+to outsmart your test. See the [full code](tour/cache.zig).
 
 ## Other benchmarking libraries for Zig
 

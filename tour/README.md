@@ -1,8 +1,8 @@
 # A guided tour of Metron 
 
-The tests in this directory serve as a reference for how to write
-microbenchmarks with Metron. This README documents the tests as a guide from
-simple to advanced customization.
+The examples in this directory serve as a reference for how to write
+microbenchmarks with Metron. This README serves as a guide from simple to
+advanced customization.
 
 | Section| Concept |
 | :---  | :---    |

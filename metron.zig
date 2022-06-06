@@ -1,5 +1,5 @@
 //! Metron is a microbenchmarking library for Zig, modeled after the Google
-//! Benchmark library for C/C++. See README.md for details and tests/README.md
+//! Benchmark library for C/C++. See README.md for details and tour/README.md
 //! for a feature guide.
 const std = @import("std");
 

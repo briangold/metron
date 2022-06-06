@@ -170,7 +170,7 @@ fn runThreads(
             if (state.duration == null) {
                 // The benchmark entry didn't set the state duration, which
                 // likely happened if you forgot to iterate over the state
-                // iterator. See the unit tests for examples.
+                // iterator. See the tour guide for examples.
                 @panic("missing duration - did you forget to iterate?");
             }
 

@@ -1,16 +1,16 @@
 const std = @import("std");
 
-const tests = [_]struct {
+const tour = [_]struct {
     name: []const u8,
     path: []const u8,
 }{
-    .{ .name = "empty", .path = "tests/empty.zig" },
-    .{ .name = "fib", .path = "tests/fib.zig" },
-    .{ .name = "roots", .path = "tests/roots.zig" },
-    .{ .name = "bitset", .path = "tests/bitset.zig" },
-    .{ .name = "memcpy", .path = "tests/memcpy.zig" },
-    .{ .name = "threads", .path = "tests/threads.zig" },
-    .{ .name = "cache", .path = "tests/cache.zig" },
+    .{ .name = "empty", .path = "tour/empty.zig" },
+    .{ .name = "fib", .path = "tour/fib.zig" },
+    .{ .name = "roots", .path = "tour/roots.zig" },
+    .{ .name = "bitset", .path = "tour/bitset.zig" },
+    .{ .name = "memcpy", .path = "tour/memcpy.zig" },
+    .{ .name = "threads", .path = "tour/threads.zig" },
+    .{ .name = "cache", .path = "tour/cache.zig" },
 };
 
 const metron_pkg = std.build.Pkg{
@@ -23,8 +23,8 @@ pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
 
-    for (tests) |tc| {
-        const exe = b.addExecutable(tc.name, tc.path);
+    for (tour) |t| {
+        const exe = b.addExecutable(t.name, t.path);
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackage(metron_pkg);
