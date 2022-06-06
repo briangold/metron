@@ -310,7 +310,7 @@ start scheduling on the efficiency cores and performance doesn't scale linearly.
 
 In contrast, the `fetchAdd` variant starts out 20x slower and actually slows
 down with each additional thread. Synchronization operations (`ldrex/strex` in
-ARM) flush the processor pipeline and adding threads introduces additional
+ARM) stall the processor pipeline and adding threads introduces additional
 contention on the shared variable. By deferring the synchronization work to the
 final iteration, `localAdd` returns to the performance of the `uncoord` version
 while still producing the same result as the contended `fetchAdd`.
