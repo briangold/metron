@@ -41,7 +41,7 @@ measuring time and counting loop iterations to get an accurate measurement of
 how long `someFunction` takes per call.
 
 To learn more about the features and details of Metron, see the [guided
-tour](tour/README.md).
+tour](tour/README.md), which can be built by `zig build tour`.
 
 ## Example output
 
@@ -49,8 +49,8 @@ Clone this repository and use a recent Zig binary to build the included tour.
 On my M1 Macbook Pro:
 
 ```console
-$ zig build -Drelease-fast=true   # Build samples
-$ ./zig-out/bin/cache             # Run the "cache" benchmark
+$ zig build tour -Drelease-fast=true   # Build samples
+$ ./zig-out/bin/cache                  # Run the "cache" benchmark
 ---------------------------------------
 Benchmark           Time     Iterations
 ---------------------------------------

@@ -23,12 +23,16 @@ pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
 
+    const tour_step = b.step("tour", "Build a guided tour");
+
     for (tour) |t| {
         const exe = b.addExecutable(t.name, t.path);
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackage(metron_pkg);
-        exe.install();
+
+        const install_exe = b.addInstallArtifact(exe);
+        tour_step.dependOn(&install_exe.step);
     }
 
     // unit tests for the library itself
