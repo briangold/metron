@@ -1,3 +1,5 @@
+//! Measures the overhead in various forms of function calls.
+
 const std = @import("std");
 const metron = @import("metron");
 
@@ -10,21 +12,19 @@ pub fn main() anyerror!void {
         pub const min_iter = 1000;
 
         pub fn inline_fn(state: *State, _: void) void {
-            var iter = state.iter();
-            var acc: usize = 0;
-            while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
-                acc = @call(.{ .modifier = .always_inline }, do_add, .{ acc, 1 });
-            }
-            std.mem.doNotOptimizeAway(&acc);
+            addDirect(.always_inline, state);
         }
 
         pub fn noinline_fn(state: *State, _: void) void {
+            addDirect(.never_inline, state);
+        }
+
+        fn addDirect(modifier: anytype, state: *State) void {
             var iter = state.iter();
             var acc: usize = 0;
             while (iter.next()) |i| {
                 std.mem.doNotOptimizeAway(&i);
-                acc = @call(.{ .modifier = .never_inline }, do_add, .{ acc, 1 });
+                acc = @call(.{ .modifier = modifier }, do_add, .{ acc, 1 });
             }
             std.mem.doNotOptimizeAway(&acc);
         }
@@ -44,7 +44,7 @@ pub fn main() anyerror!void {
 
         // With a fat-pointer model, each object of a given concrete type shares
         // a common, static vtable. This enables the compiler to perform the
-        // necessary analysis to devirtualize the call, and the resulting
+        // necessary analysis to de-virtualize the call, and the resulting
         // code is equivalent to the inline_fn variant above.
         pub fn fatPointer(state: *State, _: void) void {
             var adder = FatAddConstant{ .val = 17 };
