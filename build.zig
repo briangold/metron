@@ -13,6 +13,13 @@ const tour = [_]struct {
     .{ .name = "cache", .path = "tour/cache.zig" },
 };
 
+const micros = [_]struct {
+    name: []const u8,
+    path: []const u8,
+}{
+    .{ .name = "fn", .path = "micros/fn.zig" },
+};
+
 const metron_pkg = std.build.Pkg{
     .name = "metron",
     .path = .{ .path = "metron.zig" },
@@ -33,6 +40,18 @@ pub fn build(b: *std.build.Builder) void {
 
         const install_exe = b.addInstallArtifact(exe);
         tour_step.dependOn(&install_exe.step);
+    }
+
+    const micros_step = b.step("micros", "Build microbenchmarks");
+
+    for (micros) |m| {
+        const exe = b.addExecutable(m.name, m.path);
+        exe.setTarget(target);
+        exe.setBuildMode(mode);
+        exe.addPackage(metron_pkg);
+
+        const install_exe = b.addInstallArtifact(exe);
+        micros_step.dependOn(&install_exe.step);
     }
 
     // unit tests for the library itself
