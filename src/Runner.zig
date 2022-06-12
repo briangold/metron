@@ -98,7 +98,6 @@ fn runOneTestRep(
 ) !Result(B) {
     _ = index; // TODO: needed?
 
-    const max_iter: u64 = 1_000_000_000;
     const threads = maybe_threads orelse 1;
 
     const min_time: u64 = if (@hasDecl(B, "min_time"))
@@ -106,14 +105,17 @@ fn runOneTestRep(
     else
         std.time.ns_per_s;
 
+    const max_iter = if (@hasDecl(B, "max_iter")) B.max_iter else 1_000_000_000;
     const min_iter = if (@hasDecl(B, "min_iter")) B.min_iter else 1;
+    std.debug.assert(min_iter <= max_iter);
 
     var n: usize = min_iter;
-    var result = while (n < max_iter) {
-        const result = try runner.runThreads(B, def, arg, threads, n);
+    var result: Result(B) = undefined;
+    while (true) {
+        result = try runner.runThreads(B, def, arg, threads, n);
 
-        if (result.ns >= min_time) {
-            break result;
+        if (n >= max_iter or result.ns >= min_time) {
+            break;
         }
 
         // This algorithm is based on the one in Google Benchmark, but
@@ -128,7 +130,7 @@ fn runOneTestRep(
             prev * 10; // otherwise, just bump by 10
         n = std.math.max(n, prev + 1); // ensure at least +1
         n = std.math.min(n, max_iter); // don't go over max
-    } else unreachable;
+    }
 
     return result;
 }
