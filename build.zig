@@ -18,6 +18,7 @@ const micros = [_]struct {
     path: []const u8,
 }{
     .{ .name = "fn", .path = "micros/fn.zig" },
+    .{ .name = "mem", .path = "micros/mem.zig" },
 };
 
 const metron_pkg = std.build.Pkg{
