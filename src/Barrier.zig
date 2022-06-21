@@ -29,7 +29,7 @@ pub fn wait(b: *Barrier) void {
 
     // wait for phase change
     while (b.phase.load(.Acquire) == prev_phase) {
-        Futex.wait(&b.phase, 0);
+        Futex.wait(&b.phase, prev_phase);
     }
 }
 
