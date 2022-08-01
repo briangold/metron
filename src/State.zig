@@ -26,7 +26,7 @@ pub fn iter(state: *State) Iterator {
     return it;
 }
 
-const Iterator = struct {
+pub const Iterator = struct {
     // keep iterator to minimum so the compiler has a better chance of putting
     // cur and limit in registers and avoid ld/st to the stack
     cur: usize = 0,
