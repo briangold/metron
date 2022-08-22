@@ -22,7 +22,7 @@ The empty test serves as a calibration experiment, measuring the cost of a loop
 that does no apparent work. 
 
 ```zig
-pub fn simple(state: *State, _: void) void {
+pub fn simple(state: *State) void {
     var iter = state.iter();
     while (iter.next()) |i| {
         std.mem.doNotOptimizeAway(&i);

@@ -1,5 +1,7 @@
 const std = @import("std");
 
+const FileSource = std.build.FileSource;
+
 const tour = [_]struct {
     name: []const u8,
     path: []const u8,
@@ -23,7 +25,7 @@ const micros = [_]struct {
 
 const metron_pkg = std.build.Pkg{
     .name = "metron",
-    .path = .{ .path = "metron.zig" },
+    .source = FileSource.relative("metron.zig"),
     .dependencies = &[_]std.build.Pkg{},
 };
 

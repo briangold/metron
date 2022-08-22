@@ -132,15 +132,20 @@ fn calcNameWidth(comptime Spec: anytype) usize {
     var fbs = std.io.fixedBufferStream(&buf);
     var max: usize = 10; // min
 
-    const threads = if (@hasDecl(Spec, "threads"))
+    const threads = comptime if (@hasDecl(Spec, "threads"))
         Spec.threads
     else
         [_]?usize{null};
 
+    const args = comptime if (@hasDecl(Spec, "args"))
+        Spec.args
+    else
+        [_]void{{}};
+
     const funlist = comptime spec.functions(Spec);
 
     inline for (funlist) |fun| {
-        inline for (Spec.args) |arg| {
+        inline for (args) |arg| {
             inline for (threads) |tc| {
                 fbs.reset();
 

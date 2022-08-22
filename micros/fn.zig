@@ -8,14 +8,13 @@ const State = metron.State;
 pub fn main() anyerror!void {
     try metron.run(struct {
         pub const name = "fn";
-        pub const args = [_]void{{}};
         pub const min_iter = 1000;
 
-        pub fn inline_fn(state: *State, _: void) void {
+        pub fn inline_fn(state: *State) void {
             addDirect(.always_inline, state);
         }
 
-        pub fn noinline_fn(state: *State, _: void) void {
+        pub fn noinline_fn(state: *State) void {
             addDirect(.never_inline, state);
         }
 
@@ -37,7 +36,7 @@ pub fn main() anyerror!void {
         // has its own vtable and the compiler cannot guarantee that the
         // function pointer isn't changed somewhere. So it cannot de-virtualize
         // the call and pays for an indirect branch and function call overhead.
-        pub fn fieldParentPtr(state: *State, _: void) void {
+        pub fn fieldParentPtr(state: *State) void {
             var adder = FppAddConstant{ .val = 17 };
             addWithInterface(state, adder.interface());
         }
@@ -46,7 +45,7 @@ pub fn main() anyerror!void {
         // a common, static vtable. This enables the compiler to perform the
         // necessary analysis to de-virtualize the call, and the resulting
         // code is equivalent to the inline_fn variant above.
-        pub fn fatPointer(state: *State, _: void) void {
+        pub fn fatPointer(state: *State) void {
             var adder = FatAddConstant{ .val = 17 };
             addWithInterface(state, adder.interface());
         }
@@ -80,7 +79,7 @@ const FppAddConstant = struct {
 };
 
 const FppUnaryOp = struct {
-    opFn: fn (*FppUnaryOp, usize) usize,
+    opFn: *const fn (*FppUnaryOp, usize) usize,
 
     inline fn op(g: *FppUnaryOp, x: usize) usize {
         return g.opFn(g, x);
@@ -104,7 +103,7 @@ const FatUnary = struct {
     vtable: *const VTable,
 
     const VTable = struct {
-        op: fn (ptr: *anyopaque, x: usize) usize,
+        op: *const fn (ptr: *anyopaque, x: usize) usize,
     };
 
     inline fn op(self: FatUnary, x: usize) usize {

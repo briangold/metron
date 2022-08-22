@@ -9,7 +9,6 @@ const State = metron.State;
 pub fn main() anyerror!void {
     try metron.run(struct {
         pub const name = "empty";
-        pub const args = [_]void{{}};
         pub const min_iter = 100; // useful for attaching gdb and seeing loop
 
         // On my M1 Mac with -Drelease-fast=true, the inner loop compiles to:
@@ -28,14 +27,14 @@ pub fn main() anyerror!void {
         // individual instructions you probably need to inspect carefully and
         // hand-hold the compiler as needed.
 
-        pub fn simple(state: *State, _: void) void {
+        pub fn simple(state: *State) void {
             var iter = state.iter();
             while (iter.next()) |i| {
                 std.mem.doNotOptimizeAway(&i);
             }
         }
 
-        pub fn fixture(state: *State, _: void) !void {
+        pub fn fixture(state: *State) !void {
             // We can do expensive setup and teardown before the main loop,
             // with no disruption to results.
             const size = 100 * 1024 * 1024;

@@ -87,13 +87,13 @@ pub fn printTestName(
         try w.print("/{s}", .{fun_name});
     }
 
-    const arg_names = if (@hasDecl(Benchmark, "arg_names"))
+    const arg_names = comptime if (@hasDecl(Benchmark, "arg_names"))
         Benchmark.arg_names
     else
         &[_]?[]const u8{null};
 
     // TODO: make arg_units a slice to have per-arg customization?
-    const arg_units = if (@hasDecl(Benchmark, "arg_units"))
+    const arg_units = comptime if (@hasDecl(Benchmark, "arg_units"))
         Benchmark.arg_units
     else
         UnitDisplay.raw;

@@ -12,14 +12,13 @@ var counter: std.atomic.Atomic(usize) = undefined;
 pub fn main() anyerror!void {
     try metron.run(struct {
         pub const name = "threads";
-        pub const args = [_]void{{}};
         pub const threads = [_]usize{ 1, 2, 4, 8 };
 
         pub const Counters = struct {
             rate: RateCounter("add", .div_1000) = .{},
         };
 
-        pub fn uncoord(state: *State, _: void) Counters {
+        pub fn uncoord(state: *State) Counters {
             // Just an empty work loop that counts up locally on each thread,
             // useful to see how time is reported using wall-clock time on the
             // main thread, recording the duration from the point the main
@@ -34,7 +33,7 @@ pub fn main() anyerror!void {
             return Counters{ .rate = .{ .val = state.iterations } };
         }
 
-        pub fn fetchAdd(state: *State, _: void) Counters {
+        pub fn fetchAdd(state: *State) Counters {
             if (state.thread_id == 0) {
                 counter.store(0, .Release);
             }
@@ -61,7 +60,7 @@ pub fn main() anyerror!void {
             return Counters{ .rate = .{ .val = state.iterations } };
         }
 
-        pub fn localAdd(state: *State, _: void) Counters {
+        pub fn localAdd(state: *State) Counters {
             if (state.thread_id == 0) {
                 counter.store(0, .Release);
             }

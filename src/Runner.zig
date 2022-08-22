@@ -41,7 +41,10 @@ pub fn run(runner: *Runner, comptime Spec: anytype) !void {
 }
 
 fn Result(comptime B: type) type {
-    const Counters = if (@hasDecl(B, "Counters")) B.Counters else struct {};
+    const Counters = comptime if (@hasDecl(B, "Counters"))
+        B.Counters
+    else
+        struct {};
 
     return struct {
         ops: usize,
@@ -51,20 +54,25 @@ fn Result(comptime B: type) type {
 }
 
 fn runOneBenchmark(runner: *Runner, comptime B: type) !void {
-    const repeat = if (@hasDecl(B, "repeat")) B.repeat else 1;
+    const repeat = comptime if (@hasDecl(B, "repeat")) B.repeat else 1;
     if (repeat != 1) @compileError("repetition not yet supported");
 
-    const threads = if (@hasDecl(B, "threads"))
+    const threads = comptime if (@hasDecl(B, "threads"))
         B.threads
     else
         [_]?usize{null}; // null signals the reporter to not indicate # threads
+
+    const args = comptime if (@hasDecl(B, "args"))
+        B.args
+    else
+        [_]void{{}};
 
     const BenchResult = Result(B);
     const ResultList = std.ArrayListUnmanaged(BenchResult);
     const funlist = comptime spec.functions(B);
 
     inline for (funlist) |def| {
-        inline for (B.args) |arg| {
+        inline for (args) |arg| {
             inline for (threads) |tc| {
                 var accum = ResultList{};
                 defer accum.deinit(runner.alloc);
@@ -100,13 +108,21 @@ fn runOneTestRep(
 
     const threads = maybe_threads orelse 1;
 
-    const min_time: u64 = if (@hasDecl(B, "min_time"))
+    const min_time: u64 = comptime if (@hasDecl(B, "min_time"))
         B.min_time
     else
         std.time.ns_per_s;
 
-    const max_iter = if (@hasDecl(B, "max_iter")) B.max_iter else 1_000_000_000;
-    const min_iter = if (@hasDecl(B, "min_iter")) B.min_iter else 1;
+    const max_iter = comptime if (@hasDecl(B, "max_iter"))
+        B.max_iter
+    else
+        1_000_000_000;
+
+    const min_iter = comptime if (@hasDecl(B, "min_iter"))
+        B.min_iter
+    else
+        1;
+
     std.debug.assert(min_iter <= max_iter);
 
     var n: usize = min_iter;
@@ -166,12 +182,17 @@ fn runThreads(
             // compute the result.
             const fun = @field(B, def.name);
             const copt = std.builtin.CallOptions{ .modifier = .never_inline };
-            const FunArgs = std.meta.ArgsTuple(@TypeOf(fun));
             const Return = @typeInfo(@TypeOf(fun)).Fn.return_type orelse
                 @compileError(def.name ++ " missing return type");
+            const FunArgs = std.meta.ArgsTuple(@TypeOf(fun));
+
+            const fun_args = switch (@typeInfo(@TypeOf(arg))) {
+                .Void => FunArgs{&state},
+                else => FunArgs{ &state, arg },
+            };
 
             // Run the user-provided function and panic on any error
-            const maybe_err = @call(copt, fun, FunArgs{ &state, arg });
+            const maybe_err = @call(copt, fun, fun_args);
             const res = switch (@typeInfo(Return)) {
                 .ErrorUnion => maybe_err catch
                     @panic("Benchmark '" ++ def.name ++ "' hit error"),
