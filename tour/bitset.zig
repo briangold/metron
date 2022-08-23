@@ -20,11 +20,11 @@ pub fn main() anyerror!void {
             var iter = state.iter();
             var res: usize = undefined;
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
                 res = bs.count();
             }
             std.debug.assert(res == n - 1);
-            std.mem.doNotOptimizeAway(&res);
+            std.mem.doNotOptimizeAway(res);
         }
     });
 }

@@ -10,13 +10,13 @@ pub fn main() anyerror!void {
     try metron.run(struct {
         pub const name = "empty";
         pub const min_iter = 100; // useful for attaching gdb and seeing loop
+        pub const max_iter = 10_000_000_000;
 
         // On my M1 Mac with -Drelease-fast=true, the inner loop compiles to:
         //
         // loop:
-        //    stp x10, x8, [sp, #8] ; doNotOptimize(&i)
-        //    add x8, x8, #0x1      ; increment
-        //    cmp x9, x8            ; are we done?
+        //    subs x20, x20, #0x1   ; decrement i
+        //    str x20, [sp, #24]    ; doNotOptimize(i)
         //    b.ne loop             ; branch backwards if not done
         //
         // However... backend optimization is fickle, and seeming unrelated
@@ -30,7 +30,7 @@ pub fn main() anyerror!void {
         pub fn simple(state: *State) void {
             var iter = state.iter();
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
             }
         }
 
@@ -46,7 +46,7 @@ pub fn main() anyerror!void {
             // loop is timed from creation of iter() to final next()
             var iter = state.iter();
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
             }
         }
     });

@@ -44,7 +44,7 @@ pub fn main() anyerror!void {
                     acc = acc +% @reduce(.Add, vec);
                 }
             }
-            std.mem.doNotOptimizeAway(&acc);
+            std.mem.doNotOptimizeAway(acc);
 
             return Counters{ .rate = .{ .val = bytes * state.iterations } };
         }
@@ -93,7 +93,7 @@ pub fn main() anyerror!void {
                     acc = acc +% @reduce(.Add, vec);
                 }
             }
-            std.mem.doNotOptimizeAway(&acc);
+            std.mem.doNotOptimizeAway(acc);
 
             return Counters{ .rate = .{ .val = bytes * state.iterations } };
         }

@@ -50,7 +50,7 @@ pub fn main() anyerror!void {
                 for (indx.items) |i| {
                     sum = sum +% data.items[i];
                 }
-                std.mem.doNotOptimizeAway(&sum);
+                std.mem.doNotOptimizeAway(sum);
             }
 
             return Counters{ .rate = .{ .val = bytes * state.iterations } };

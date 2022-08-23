@@ -16,11 +16,11 @@ pub fn main() anyerror!void {
             while (iter.next()) |i| {
                 // ensure the compiler doesn't hoist fib_recursive out of the
                 // loop, as it observes it has no side effects
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
                 res = fib_recursive(n);
             }
             // ensure res isn't thrown away entirely
-            std.mem.doNotOptimizeAway(&res);
+            std.mem.doNotOptimizeAway(res);
         }
 
         pub fn sequential(state: *State, n: usize) void {
@@ -29,11 +29,11 @@ pub fn main() anyerror!void {
             while (iter.next()) |i| {
                 // ensure the compiler doesn't hoist fib_sequential out of the
                 // loop, as it observes it has no side effects
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
                 res = fib_sequential(n);
             }
             // ensure res isn't thrown away entirely
-            std.mem.doNotOptimizeAway(&res);
+            std.mem.doNotOptimizeAway(res);
         }
     });
 }

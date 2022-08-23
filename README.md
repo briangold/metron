@@ -25,9 +25,9 @@ pub fn main() anyerror!void {
         pub fn run(state: *State, n: usize) void {
             var iter = state.iter();
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
                 const res = someFunction(n);
-                std.mem.doNotOptimizeAway(&res);
+                std.mem.doNotOptimizeAway(res);
             }
         }
     });

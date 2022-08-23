@@ -32,7 +32,7 @@ pub fn main() anyerror!void {
             while (iter.next()) |_| {
                 std.mem.copy(@TypeOf(src[0]), dst, src);
             }
-            std.mem.doNotOptimizeAway(&res);
+            std.mem.doNotOptimizeAway(res);
 
             // tell the runner we've processed this many bytes (for reporting)
             return Counters{

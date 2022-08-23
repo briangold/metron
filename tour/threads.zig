@@ -26,7 +26,7 @@ pub fn main() anyerror!void {
             // barrier in the final work-loop iteration.
             var iter = state.iter();
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
             }
 
             // return the per-thread count

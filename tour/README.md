@@ -25,7 +25,7 @@ that does no apparent work.
 pub fn simple(state: *State) void {
     var iter = state.iter();
     while (iter.next()) |i| {
-        std.mem.doNotOptimizeAway(&i);
+        std.mem.doNotOptimizeAway(i);
     }
 }
 ```
@@ -51,9 +51,9 @@ counter and compares that with the requested count.  In a release build, the
 iteration counter and its limit value will likely be kept in registers, allowing
 the core of this loop to be ~3 instructions (depending on ISA specifics and
 compiler optimizations). In practice, we see a fourth instruction that comes
-from odd-looking `std.mem.doNotOptimizeAway(&i)` call.
+from odd-looking `std.mem.doNotOptimizeAway(i)` call.
 
-The call to `std.mem.doNotOptimizeAway(&i)` is there to tell the compiler that
+The call to `std.mem.doNotOptimizeAway(i)` is there to tell the compiler that
 we do not want the loop to be optimized out, which is necessary in this test 
 (and many others) because it's clear we're not doing any useful work. Modern
 compilers are incredibly sophisticated, and microbenchmark authors must take

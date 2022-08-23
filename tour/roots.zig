@@ -22,9 +22,9 @@ pub fn main() anyerror!void {
 
             var iter = state.iter();
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
                 const res = RootFinder.find_root(x0, nf, arg.a, eps);
-                std.mem.doNotOptimizeAway(&res);
+                std.mem.doNotOptimizeAway(res);
             }
         }
     });

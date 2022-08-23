@@ -15,46 +15,42 @@ barrier: *Barrier,
 alloc: std.mem.Allocator, // TODO: use a tracked allocator so we can report stats
 timer: Timer = undefined,
 
+pub fn startTimer(state: *State) void {
+    @setCold(true);
+    state.timer = Timer.start() catch unreachable;
+    state.barrier.wait();
+}
+
+pub fn stopTimer(state: *State) void {
+    @setCold(true);
+    state.barrier.wait();
+    state.duration = state.timer.read();
+}
+
 pub fn iter(state: *State) Iterator {
     var it = Iterator{
-        .limit = state.iterations,
+        .cur = state.iterations,
         .state = state,
     };
 
-    it.start();
+    state.startTimer();
 
     return it;
 }
 
 pub const Iterator = struct {
     // keep iterator to minimum so the compiler has a better chance of putting
-    // cur and limit in registers and avoid ld/st to the stack
-    cur: usize = 0,
-    limit: usize,
+    // cur in register and avoid ld/st to the stack
+    cur: usize,
     state: *State,
 
-    inline fn start(it: *Iterator) void {
-        @setCold(true);
-        std.debug.assert(it.cur == 0);
-        it.state.timer = Timer.start() catch unreachable;
-        it.state.barrier.wait();
-    }
-
-    inline fn end(it: *Iterator) void {
-        @setCold(true);
-        it.state.barrier.wait();
-        it.state.duration = it.state.timer.read();
-    }
-
     pub inline fn next(it: *Iterator) ?usize {
-        const cur = it.cur;
-
-        if (cur != it.limit) {
-            it.cur += 1;
-            return cur;
+        if (it.cur != 0) {
+            it.cur -= 1;
+            return it.cur;
         }
 
-        it.end();
+        it.state.stopTimer();
         return null;
     }
 };

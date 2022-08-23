@@ -22,10 +22,10 @@ pub fn main() anyerror!void {
             var iter = state.iter();
             var acc: usize = 0;
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
                 acc = @call(.{ .modifier = modifier }, do_add, .{ acc, 1 });
             }
-            std.mem.doNotOptimizeAway(&acc);
+            std.mem.doNotOptimizeAway(acc);
         }
 
         fn do_add(x: usize, y: usize) usize {
@@ -54,10 +54,10 @@ pub fn main() anyerror!void {
             var acc: usize = 0;
             var iter = state.iter();
             while (iter.next()) |i| {
-                std.mem.doNotOptimizeAway(&i);
+                std.mem.doNotOptimizeAway(i);
                 acc = iface.op(acc);
             }
-            std.mem.doNotOptimizeAway(&acc);
+            std.mem.doNotOptimizeAway(acc);
         }
     });
 }
