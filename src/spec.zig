@@ -50,7 +50,7 @@ pub fn RateCounter(
     };
 }
 
-pub fn ByteCounter(scale: UnitDisplay) type {
+pub fn ByteCounter(comptime scale: UnitDisplay) type {
     return RateCounter("B", scale);
 }
 
