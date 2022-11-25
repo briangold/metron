@@ -4,7 +4,7 @@
 
 const std = @import("std");
 
-const Decl = std.builtin.TypeInfo.Declaration;
+const Decl = std.builtin.Type.Declaration;
 
 // Terminology guiding the naming of things:
 //  - A Spec is the generic name for one or more Benchmark definitions

@@ -77,9 +77,9 @@ pub fn main() anyerror!void {
                     // Read from locations as we go
                     //  NOTE - this would be a place for a @gather() intrinsic
                     //  See: https://github.com/ziglang/zig/issues/903
-                    vi = 0;
-                    inline while (vi < vsz) : (vi += 1) {
-                        vec[vi] = arr[loc[vi]];
+                    comptime var vj = 0;
+                    inline while (vj < vsz) : (vj += 1) {
+                        vec[vj] = arr[loc[vj]];
                     }
 
                     // Update locations - each vector lane is independently

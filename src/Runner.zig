@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const Decl = std.builtin.TypeInfo.Declaration;
+const Decl = std.builtin.Type.Declaration;
 
 const Barrier = @import("Barrier.zig");
 const Context = @import("Context.zig");

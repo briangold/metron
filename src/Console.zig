@@ -121,7 +121,7 @@ fn calcNameWidth(comptime Spec: anytype) usize {
         // Spec is a list of benchmarks... compute max across each
         var max: usize = 0;
         inline for (Spec) |B| {
-            max = @maximum(max, calcNameWidth(B));
+            max = @max(max, calcNameWidth(B));
         }
         return max;
     }
@@ -157,7 +157,7 @@ fn calcNameWidth(comptime Spec: anytype) usize {
                     tc,
                 ) catch unreachable;
 
-                max = @maximum(max, fbs.getPos() catch unreachable);
+                max = @max(max, fbs.getPos() catch unreachable);
             }
         }
     }
