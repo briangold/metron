@@ -23,44 +23,50 @@ const micros = [_]struct {
     .{ .name = "mem", .path = "micros/mem.zig" },
 };
 
-const metron_pkg = std.build.Pkg{
-    .name = "metron",
-    .source = FileSource.relative("metron.zig"),
-    .dependencies = &[_]std.build.Pkg{},
-};
-
 pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
+    const optimize = b.standardOptimizeOption(.{});
 
     const tour_step = b.step("tour", "Build a guided tour");
 
-    for (tour) |t| {
-        const exe = b.addExecutable(t.name, t.path);
-        exe.setTarget(target);
-        exe.setBuildMode(mode);
-        exe.addPackage(metron_pkg);
+    const metron_mod = b.createModule(.{
+        .source_file = .{ .path = "metron.zig" },
+    });
 
-        const install_exe = b.addInstallArtifact(exe);
-        tour_step.dependOn(&install_exe.step);
+    for (tour) |t| {
+        const exe = b.addExecutable(.{
+            .name = t.name,
+            .root_source_file = .{ .path = t.path },
+            .target = target,
+            .optimize = optimize,
+        });
+        exe.addModule("metron", metron_mod);
+        exe.install();
+
+        tour_step.dependOn(&exe.step);
     }
 
     const micros_step = b.step("micros", "Build microbenchmarks");
 
     for (micros) |m| {
-        const exe = b.addExecutable(m.name, m.path);
-        exe.setTarget(target);
-        exe.setBuildMode(mode);
-        exe.addPackage(metron_pkg);
+        const exe = b.addExecutable(.{
+            .name = m.name,
+            .root_source_file = .{ .path = m.path },
+            .target = target,
+            .optimize = optimize,
+        });
+        exe.addModule("metron", metron_mod);
+        exe.install();
 
-        const install_exe = b.addInstallArtifact(exe);
-        micros_step.dependOn(&install_exe.step);
+        micros_step.dependOn(&exe.step);
     }
 
     // unit tests for the library itself
-    const exe_tests = b.addTest("metron.zig");
-    exe_tests.setTarget(target);
-    exe_tests.setBuildMode(mode);
+    const exe_tests = b.addTest(.{
+        .root_source_file = .{ .path = "metron.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
 
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&exe_tests.step);

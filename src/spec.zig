@@ -105,7 +105,7 @@ pub fn printTestName(
 
         .Struct => {
             const fields = std.meta.fields(@TypeOf(arg));
-            inline for (fields) |fld, i| {
+            inline for (fields, 0..) |fld, i| {
                 const val = @field(arg, fld.name);
                 const name = if (i < arg_names.len) arg_names[i] else null;
                 try printScalarArg(w, val, name, arg_units);
@@ -252,13 +252,13 @@ pub fn Args(comptime def: anytype) type {
     const fields = std.meta.fields(@TypeOf(def));
 
     var tuple_fields: [fields.len]std.builtin.Type.StructField = undefined;
-    inline for (fields) |f, i| {
+    inline for (fields, 0..) |f, i| {
         const slice = @field(def, f.name);
         const T = @TypeOf(slice[0]);
 
         tuple_fields[i] = .{
             .name = f.name,
-            .field_type = T,
+            .type = T,
             .default_value = null,
             .is_comptime = false,
             .alignment = if (@sizeOf(T) > 0) @alignOf(T) else 0,
@@ -325,8 +325,8 @@ test "args" {
     try std.testing.expectEqual(@as(usize, 2), a1_fields.len);
     try std.testing.expectEqualSlices(u8, "n", a1_fields[0].name);
     try std.testing.expectEqualSlices(u8, "v", a1_fields[1].name);
-    try std.testing.expect(a1_fields[0].field_type == usize);
-    try std.testing.expect(a1_fields[1].field_type == bool);
+    try std.testing.expect(a1_fields[0].type == usize);
+    try std.testing.expect(a1_fields[1].type == bool);
 
     const p1 = argsProduct(a1);
 

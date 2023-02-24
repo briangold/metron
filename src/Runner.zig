@@ -189,7 +189,6 @@ fn runThreads(
             // We don't want inlining here... the compiler can statically
             // compute the result.
             const fun = @field(B, def.name);
-            const copt = std.builtin.CallOptions{ .modifier = .never_inline };
             const Return = @typeInfo(@TypeOf(fun)).Fn.return_type orelse
                 @compileError(def.name ++ " missing return type");
             const FunArgs = std.meta.ArgsTuple(@TypeOf(fun));
@@ -200,7 +199,7 @@ fn runThreads(
             };
 
             // Run the user-provided function and panic on any error
-            const maybe_err = @call(copt, fun, fun_args);
+            const maybe_err = @call(.never_inline, fun, fun_args);
             const res = switch (@typeInfo(Return)) {
                 .ErrorUnion => maybe_err catch
                     @panic("Benchmark '" ++ def.name ++ "' hit error"),
@@ -235,7 +234,7 @@ fn runThreads(
     };
 
     // spawn N-1 threads, numbered starting at 1
-    for (handles) |*h, i| {
+    for (handles, 0..) |*h, i| {
         const tid = i + 1;
         h.* = try std.Thread.spawn(
             .{},
@@ -245,7 +244,7 @@ fn runThreads(
     }
 
     // run thread '0' in place here
-    @call(.{}, ThreadRunner.entry, .{ &t_runner, 0, num_iter, &results[0] });
+    @call(.auto, ThreadRunner.entry, .{ &t_runner, 0, num_iter, &results[0] });
 
     // join all the threads that were spawned
     for (handles) |h| h.join();

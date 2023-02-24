@@ -12,7 +12,7 @@ pub fn main() anyerror!void {
         pub const min_iter = 100; // useful for attaching gdb and seeing loop
         pub const max_iter = 10_000_000_000;
 
-        // On my M1 Mac with -Drelease-fast=true, the inner loop compiles to:
+        // On my M1 Mac with -Doptimize=ReleaseFast, the inner loop compiles to:
         //
         // loop:
         //    subs x20, x20, #0x1   ; decrement i

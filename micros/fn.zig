@@ -23,7 +23,7 @@ pub fn main() anyerror!void {
             var acc: usize = 0;
             while (iter.next()) |i| {
                 std.mem.doNotOptimizeAway(i);
-                acc = @call(.{ .modifier = modifier }, do_add, .{ acc, 1 });
+                acc = @call(modifier, do_add, .{ acc, 1 });
             }
             std.mem.doNotOptimizeAway(acc);
         }
@@ -120,7 +120,7 @@ const FatUnary = struct {
         const gen = struct {
             fn opImpl(ptr: *anyopaque, x: usize) usize {
                 const self = @ptrCast(Ptr, @alignCast(ptr_info.Pointer.alignment, ptr));
-                return @call(.{ .modifier = .always_inline }, opFn, .{ self, x });
+                return @call(.always_inline, opFn, .{ self, x });
             }
 
             const vtable = VTable{

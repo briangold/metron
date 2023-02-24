@@ -61,7 +61,7 @@ fn fib_sequential(n: usize) usize {
 test "fib correctness" {
     const exp = [_]usize{ 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144 };
 
-    for (exp) |e, i| {
+    for (exp, 0..) |e, i| {
         try std.testing.expectEqual(e, fib_sequential(i));
         try std.testing.expectEqual(e, fib_recursive(i));
     }
