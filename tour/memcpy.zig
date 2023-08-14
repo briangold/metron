@@ -25,12 +25,12 @@ pub fn main() anyerror!void {
             var dst = try state.alloc.alignedAlloc(u8, cl, n);
             defer state.alloc.free(dst);
 
-            std.mem.set(@TypeOf(src[0]), src, 'x');
+            @memset(src, 'x');
 
             var iter = state.iter();
             var res: usize = undefined;
             while (iter.next()) |_| {
-                std.mem.copy(@TypeOf(src[0]), dst, src);
+                @memcpy(dst, src);
             }
             std.mem.doNotOptimizeAway(res);
 

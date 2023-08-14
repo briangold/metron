@@ -137,8 +137,8 @@ fn runOneTestRep(
         // This algorithm is based on the one in Google Benchmark
         const prev = n;
         n = predictIter(prev, result.ns, min_time);
-        n = std.math.max(n, prev + 1); // ensure at least +1
-        n = std.math.min(n, max_iter); // don't go over max
+        n = @max(n, prev + 1); // ensure at least +1
+        n = @min(n, max_iter); // don't go over max
     }
 
     return result;
@@ -148,11 +148,11 @@ fn predictIter(n: usize, ns: usize, min_time: usize) usize {
     // If we're close, try to predict with some padding (x1.4)
     if (ns > min_time / 10) {
         // convert to f64 to avoid overflow
-        const f_n = @intToFloat(f64, n);
-        const f_ns = @intToFloat(f64, ns);
-        const f_mt = @intToFloat(f64, min_time);
+        const f_n: f64 = @floatFromInt(n);
+        const f_ns: f64 = @floatFromInt(ns);
+        const f_mt: f64 = @floatFromInt(min_time);
 
-        return @floatToInt(usize, 1.4 * f_n * f_mt / f_ns);
+        return @intFromFloat(1.4 * f_n * f_mt / f_ns);
     } else {
         // we're far off, jump by 10x
         return n * 10;

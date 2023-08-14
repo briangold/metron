@@ -18,7 +18,7 @@ pub fn main() anyerror!void {
         pub fn run(state: *State, arg: @TypeOf(args[0])) void {
             const x0 = 1.0; // starting guess
             const eps = 0.01; // accuracy
-            const nf = @intToFloat(f64, arg.n);
+            const nf: f64 = @floatFromInt(arg.n);
 
             var iter = state.iter();
             while (iter.next()) |i| {

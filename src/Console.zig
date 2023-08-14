@@ -49,7 +49,9 @@ pub fn report(
 
     std.debug.assert(results.len == 1);
 
-    const ns_per_iter = @intToFloat(f64, results[0].ns) / @intToFloat(f64, results[0].ops);
+    const ns: f64 = @floatFromInt(results[0].ns);
+    const ops: f64 = @floatFromInt(results[0].ops);
+    const ns_per_iter = ns / ops;
     if (ns_per_iter < 1.0) {
         try writer.print("{d:10.3}", .{ns_per_iter});
     } else if (ns_per_iter < 10.0) {
@@ -69,14 +71,16 @@ pub fn report(
         const unit_scale: spec.UnitDisplay = C.unit_scale;
 
         const pfx = [_][]const u8{ "", "K", "M", "G", "T", "P" };
-        const div = @intToFloat(f64, @enumToInt(unit_scale));
+        const div: f64 = @floatFromInt(@intFromEnum(unit_scale));
         const units = if (div == 1024) "i" ++ C.unit_name else C.unit_name;
 
-        if (C.display != .rate) @compileError("non-rate counters not implemented");
+        if (C.display != .rate)
+            @compileError("non-rate counters not implemented");
         const sfx = "/s";
 
-        const per_ns = @intToFloat(f64, ctr.val) / @intToFloat(f64, results[0].ns);
-        const per_s = per_ns * @intToFloat(f64, std.time.ns_per_s);
+        const fval: f64 = @floatFromInt(ctr.val);
+        const per_ns = fval / ns;
+        const per_s = per_ns * @as(f64, @floatFromInt(std.time.ns_per_s));
         var val = per_s;
         for (pfx) |p| {
             if (val < div) {

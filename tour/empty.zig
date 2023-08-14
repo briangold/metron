@@ -41,7 +41,7 @@ pub fn main() anyerror!void {
             var arr = try state.alloc.alloc(u8, size);
             defer state.alloc.free(arr);
 
-            std.mem.set(u8, arr, 42);
+            @memset(arr, 42);
 
             // loop is timed from creation of iter() to final next()
             var iter = state.iter();

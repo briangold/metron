@@ -2,6 +2,7 @@ const std = @import("std");
 
 const FileSource = std.build.FileSource;
 
+// A "tour" of features in Metron -- see tour/README.md
 const tour = [_]struct {
     name: []const u8,
     path: []const u8,
@@ -15,6 +16,7 @@ const tour = [_]struct {
     .{ .name = "cache", .path = "tour/cache.zig" },
 };
 
+// Selected microbenchmarks
 const micros = [_]struct {
     name: []const u8,
     path: []const u8,
@@ -26,8 +28,6 @@ const micros = [_]struct {
 pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-
-    const tour_step = b.step("tour", "Build a guided tour");
 
     const metron_mod = b.createModule(.{
         .source_file = .{ .path = "metron.zig" },
@@ -41,12 +41,8 @@ pub fn build(b: *std.build.Builder) void {
             .optimize = optimize,
         });
         exe.addModule("metron", metron_mod);
-        exe.install();
-
-        tour_step.dependOn(&exe.step);
+        b.installArtifact(exe);
     }
-
-    const micros_step = b.step("micros", "Build microbenchmarks");
 
     for (micros) |m| {
         const exe = b.addExecutable(.{
@@ -56,18 +52,18 @@ pub fn build(b: *std.build.Builder) void {
             .optimize = optimize,
         });
         exe.addModule("metron", metron_mod);
-        exe.install();
-
-        micros_step.dependOn(&exe.step);
+        b.installArtifact(exe);
     }
 
     // unit tests for the library itself
-    const exe_tests = b.addTest(.{
+    const unit_tests = b.addTest(.{
         .root_source_file = .{ .path = "metron.zig" },
         .target = target,
         .optimize = optimize,
     });
 
+    const run_unit_tests = b.addRunArtifact(unit_tests);
+
     const test_step = b.step("test", "Run unit tests");
-    test_step.dependOn(&exe_tests.step);
+    test_step.dependOn(&run_unit_tests.step);
 }

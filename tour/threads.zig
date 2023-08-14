@@ -13,6 +13,7 @@ pub fn main() anyerror!void {
     try metron.run(struct {
         pub const name = "threads";
         pub const threads = [_]usize{ 1, 2, 4, 8 };
+        pub const max_iter = 10_000_000_000;
 
         pub const Counters = struct {
             rate: RateCounter("add", .div_1000) = .{},

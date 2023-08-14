@@ -35,13 +35,14 @@ pub fn init(alloc: std.mem.Allocator) !Context {
             .scaling = .unknown,
         },
         .sys_info = .{
-            .name = try os.gethostname(
-                @ptrCast(*[os.HOST_NAME_MAX]u8, buf[0..]),
-            ),
+            .name = try os.gethostname(@ptrCast(buf[0..])),
         },
     };
 }
 
 pub fn deinit(ctx: *Context, alloc: std.mem.Allocator) void {
-    alloc.free(ctx.sys_info.name);
+    // NOTE: we have to match the alloc above - without the @as cast here,
+    // alloc.free() will only free the bytes used by the hostname, not the
+    // full, original buffer sized to HOST_NAME_MAX
+    alloc.free(@as(*const [os.HOST_NAME_MAX]u8, @ptrCast(ctx.sys_info.name)));
 }

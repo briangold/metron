@@ -57,7 +57,6 @@ pub fn ByteCounter(comptime scale: UnitDisplay) type {
 pub fn functions(comptime Benchmark: type) []const Decl {
     var res: []const Decl = &[_]Decl{};
     for (std.meta.declarations(Benchmark)) |decl| {
-        if (!decl.is_pub) continue;
         if (@typeInfo(@TypeOf(@field(Benchmark, decl.name))) != .Fn) continue;
 
         res = res ++ [_]Decl{decl};
@@ -157,7 +156,7 @@ fn printIntNormalized(
     };
 
     const units = [_][]const u8{ "", "k", "M", "G", "T", "P", "E" };
-    var val = @intToFloat(f64, arg);
+    var val: f64 = @floatFromInt(arg);
     for (units) |u| {
         if (val < div) {
             return w.print("{d}{s}", .{ val, u });

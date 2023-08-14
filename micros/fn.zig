@@ -114,12 +114,9 @@ const FatUnary = struct {
         pointer: anytype,
         comptime opFn: fn (ptr: @TypeOf(pointer), x: usize) usize,
     ) FatUnary {
-        const Ptr = @TypeOf(pointer);
-        const ptr_info = @typeInfo(Ptr);
-
         const gen = struct {
             fn opImpl(ptr: *anyopaque, x: usize) usize {
-                const self = @ptrCast(Ptr, @alignCast(ptr_info.Pointer.alignment, ptr));
+                const self: @TypeOf(pointer) = @ptrCast(@alignCast(ptr));
                 return @call(.always_inline, opFn, .{ self, x });
             }
 

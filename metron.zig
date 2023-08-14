@@ -23,7 +23,7 @@ pub const ByteCounter = spec.ByteCounter;
 pub fn run(comptime Spec: anytype) !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer if (@import("builtin").mode == .Debug) {
-        std.debug.assert(!gpa.deinit());
+        std.debug.assert(gpa.deinit() == .ok);
     };
 
     var r = Runner.init(gpa.allocator(), .{});

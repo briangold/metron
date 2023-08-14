@@ -5,6 +5,12 @@ Benchmark](https://github.com/google/benchmark) library for C++.
 
 ## Quickstart
 
+To build the included [Tour](tour/README.md) and suite of microbenchmarks, 
+issue `zig build` to get a debug binary, or `zig build -Doptimize=ReleaseFast` 
+to get compiler optimizations.
+
+## Usage
+
 To benchmark a function:
 
 ```zig
@@ -41,7 +47,7 @@ measuring time and counting loop iterations to get an accurate measurement of
 how long `someFunction` takes per call.
 
 To learn more about the features and details of Metron, see the [guided
-tour](tour/README.md), which can be built by `zig build tour`.
+tour](tour/README.md).
 
 ## Example output
 
@@ -49,7 +55,7 @@ Clone this repository and use a recent Zig binary to build the included tour.
 On my M1 Macbook Pro:
 
 ```console
-$ zig build tour -Drelease-fast=true   # Build samples
+$ zig build -Doptimize=ReleaseFast     # Build with optimizations
 $ ./zig-out/bin/cache                  # Run the "cache" benchmark
 ---------------------------------------
 Benchmark           Time     Iterations
